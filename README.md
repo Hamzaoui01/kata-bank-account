@@ -1,19 +1,36 @@
 # ACCOUNT MANAGEMENT KATA
-## Overview
+## **Table of Contents**
+1. [Overview](#overview)
+2. [Terminology](#Terminology)
+3. [key features](#key)
+4. [Technology Stack](#Technology)
+5. [Setup Instructions](#Setup-Instructions)
+6. [Endpoints](#Endpoints)
+7. [Validation rules](#Validation-rules)
+8. [Error Handling](#Error-Handling)
+9. [Logging](#Logging)
+10. [Testing](#Testing)
+11. [Database](#Database)
+12. [Future Enhancements and Optimizations](#Future-Enhancements-and-Optimizations)
+## **Overview**
 This project is a kata designed to showcase an Account Management system implemented with Spring Boot. It focuses on solving a specific problem through clean code and best practices. The key features include:
-- Debit Operation: Deducts an amount from an account balance.
-- Credit Operation: Adds an amount to an account balance.
+- Withdraw an amount of money from an account.
+- Save an amount of money to an account.
 - View Operations: Retrieves a paginated list of account operations.
 - The kata demonstrates RESTful principles, proper architecture, and best practices for validation, exception handling, and testing.
 
-## key features
+### **Terminology**
+- Credit: refer to operation of withdraw money.
+- Debit: refer to operation of save money (add money to account balance).
+
+## **key** features
 - RESTful API Design: Endpoints for debit, credit, and fetching operations.
 - Validation: Input data validated using Bean Validation annotations.
 - Error Handling: Centralized exception handling using @ControllerAdvice.
 - Persistence: Data stored in an in-memory H2 database, with schema management by Flyway.
 - Testing: Comprehensive unit and integration tests.
 
-## Technology Stack
+## **Technology** Stack
 - Java 17: Language.
 - Spring Boot 3.x: Framework for rapid development.
 - H2 Database: Lightweight, in-memory database.
@@ -23,7 +40,7 @@ This project is a kata designed to showcase an Account Management system impleme
 - Lombok: Reduces boilerplate code.
 - MapStruct: Simplifies mapping between entities and DTOs.
 
-## Setup Instructions
+## **Setup Instructions**
 ### Prerequisites
 - Install Java 17 or later.
 - Install Maven 3.x.
@@ -41,19 +58,19 @@ This project is a kata designed to showcase an Account Management system impleme
 3- Access the API Documentation
 - Swagger-UI: http://localhost:8080/swagger-ui.html
 
-## Endpoints
+## **Endpoints**
 | HTTP Method |             Endpoint             |       Description        |
 |:-----------:|:--------------------------------:|:------------------------:|
 |    `POST`     |   /api/v1/accounts/{id}/debit    |     Debit an account     |
 |    `POST`     |   /api/v1/accounts/{id}/credit   |    Credit an account     |
 |     `GET`     | /api/v1/accounts/{id}/operations | Fetch account operations |
 
-## Validation rules
+## **Validation rules**
 - Amount must not be null or negative: Proper error messages are returned for invalid inputs.
 - Account existence:Operations fail gracefully if the account is not found.
 - Insufficient Balance: Credit operation fail if the account balance not sufficient.
 
-## Error Handling
+## **Error Handling**
 Centralized exception handling ensures clean and consistent error responses. Below is an example error response:
 ```json
 {
@@ -65,6 +82,12 @@ Centralized exception handling ensures clean and consistent error responses. Bel
 }
 
 ```
+## Logging
+This application uses SLF4J with the @Slf4j annotation for logging, relying on Spring Boot's default Logback configuration. The following log levels are implemented:
+
+- INFO for high-level operations (e.g., debit/credit).
+- DEBUG for detailed debugging in non-production environments.
+- ERROR for critical issues or exceptions.
 
 ## Testing
 ### Unit Tests: 
