@@ -3,7 +3,7 @@ package com.bank.kata.exception;
 import com.bank.kata.dto.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 @Slf4j
@@ -29,14 +29,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ApiError handleAccountNotFoundException(MethodArgumentNotValidException ex, WebRequest request) {
-        log.error(ex.getMessage());
-        ApiError apiError = ApiError.create(ex.getMessage(), HttpStatus.BAD_REQUEST, request);
-        List<String> errorMessages = ex.getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage)
-                .toList();
-        apiError.setMessage(String.join(", ", errorMessages));
-        return apiError;
+    public ApiError handleValidationErrors(MethodArgumentNotValidException ex, WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage()));
+        return ApiError.create(errors.toString(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -53,6 +50,14 @@ public class GlobalExceptionHandler {
     public ApiError handleOperationsNotFoundException(OperationsNotFoundException ex, WebRequest request) {
         log.error(ex.getMessage());
         return ApiError.create(ex.getMessage(),HttpStatus.NOT_FOUND,request);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseBody
+    public ApiError handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
+        log.error(ex.getMessage());
+        return ApiError.create(ex.getMessage(),HttpStatus.BAD_REQUEST,request);
     }
 
 }

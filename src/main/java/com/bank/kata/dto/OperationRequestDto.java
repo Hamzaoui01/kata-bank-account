@@ -1,18 +1,21 @@
 package com.bank.kata.dto;
 
+import com.bank.kata.enums.OperationType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Schema
 @Builder
-public class OperationRequestDto {
+public record OperationRequestDto (
+    @Schema
     @NotNull
     @DecimalMin(value = "0.0")
-    private BigDecimal amount;
+    BigDecimal amount,
+    @Schema
+    @NotNull
+    OperationType type){
 }

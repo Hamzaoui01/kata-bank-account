@@ -10,5 +10,5 @@ import java.math.BigDecimal;
 
 public interface OperationService {
     Page<OperationDto> getAccountOperations(Long accountId, PageRequest pageRequest);
-    void createOperation(Account account, OperationType debit, BigDecimal amount);
+    OperationDto createOperation(Account account, OperationType debit, BigDecimal amount);
 }

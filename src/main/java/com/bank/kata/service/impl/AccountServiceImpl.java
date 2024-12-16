@@ -1,5 +1,6 @@
 package com.bank.kata.service.impl;
 
+import com.bank.kata.dto.OperationDto;
 import com.bank.kata.enums.OperationType;
 import com.bank.kata.exception.AccountNotFoundException;
 import com.bank.kata.model.Account;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,35 +24,34 @@ public class AccountServiceImpl implements AccountService {
     private final OperationService operationService;
 
     /**
-     *
-     * Manage the debit operation on an account, it updates the account and saves the operation
-     *
-     * @param accountId the account id
-     * @param amount the amount to debit
+     * Handle the possible operation on account
+     * @param accountId Account ID
+     * @param type Type of operation
+     * @param amount amount of operation
+     * @return Operation created is returned
      */
     @Transactional
-    public void debit(Long accountId,BigDecimal amount) {
-        log.debug("Processing debit for account {}: amount={}", accountId, amount);
-        Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
-        account.debit(amount);
-        accountRepository.save(account);
-        operationService.createOperation(account, OperationType.DEBIT,amount);
-        log.info("Successfully debited account {}: amount={}, new balance={}", accountId, amount, account.getBalance());
+    @Override
+    public OperationDto handleOperation(Long accountId, OperationType type, BigDecimal amount) {
+        log.info("[START] processing {} request on account {}",type,accountId);
+        if (Objects.isNull(type)){
+            throw new IllegalArgumentException("Operation Type must not be null");
+        }
+        Account account = updateAccount(accountId, type, amount);
+        OperationDto operation = operationService.createOperation(account, type, amount);
+        log.info("[END] processing {} request on account {}",type,accountId);
+        return operation;
     }
 
-    /**
-     * Manage the credit transaction on account, it updates the account and saves the operation
-     * @param accountId the account id
-     * @param amount the amount to withdraw
-     */
-    @Transactional
-    public void credit(Long accountId,BigDecimal amount) {
-        log.info("Start credit account {}",accountId);
-        Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
-        account.credit(amount);
-        accountRepository.save(account);
-        operationService.createOperation(account, OperationType.CREDIT,amount);
-        log.info("End credit account {}",accountId);
+    private Account updateAccount(Long accountId, OperationType type, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
+        switch (type){
+            case CREDIT -> account.credit(amount);
+            case DEBIT -> account.debit(amount);
+            default -> throw new IllegalArgumentException("Unhandled Operation Type: "+ type);
+        }
+        return accountRepository.save(account);
     }
 
 

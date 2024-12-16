@@ -34,14 +34,15 @@ public class OperationServiceImpl implements OperationService {
     }
 
     @Override
-    public void createOperation(Account account, OperationType type, BigDecimal amount) {
-        log.info("Create {} Transaction on account {}",type, account.getId());
-        operationRepository.save(Operation.builder()
+    public OperationDto createOperation(Account account, OperationType type, BigDecimal amount) {
+        Operation operation = operationRepository.save(Operation.builder()
                 .account(account)
                 .amount(amount)
                 .type(type)
                 .balanceAfterOp(account.getBalance())
                 .dateTime(LocalDateTime.now())
                 .build());
+        log.info(" {} Operation created for account {}",type, account.getId());
+        return operationMapper.toDto(operation);
     }
 }

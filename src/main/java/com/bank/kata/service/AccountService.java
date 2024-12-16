@@ -1,8 +1,10 @@
 package com.bank.kata.service;
 
+import com.bank.kata.dto.OperationDto;
+import com.bank.kata.enums.OperationType;
+
 import java.math.BigDecimal;
 
 public interface AccountService {
-    void debit(Long id, BigDecimal amount);
-    void credit(Long id, BigDecimal amount);
+    OperationDto handleOperation(Long accountId, OperationType type, BigDecimal amount);
 }

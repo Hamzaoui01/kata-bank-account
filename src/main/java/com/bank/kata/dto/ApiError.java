@@ -1,20 +1,18 @@
 package com.bank.kata.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 
 @Builder
-@Data
-public class ApiError {
-    private int status;
-    private String error;
-    private String message;
-    private String path;
-    private LocalDateTime timestamp;
+public record ApiError(
+    int status,
+    String error,
+    String message,
+     String path,
+     LocalDateTime timestamp){
 
     public static ApiError create(String message, HttpStatus httpStatus, WebRequest request){
         return ApiError.builder()

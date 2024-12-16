@@ -59,14 +59,14 @@ This project is a kata designed to showcase an Account Management system impleme
 - Swagger-UI: http://localhost:8080/swagger-ui.html
 
 ## **Endpoints**
-| HTTP Method |             Endpoint             |       Description        |
-|:-----------:|:--------------------------------:|:------------------------:|
-|    `POST`     |   /api/v1/accounts/{id}/debit    |     Debit an account     |
-|    `POST`     |   /api/v1/accounts/{id}/credit   |    Credit an account     |
-|     `GET`     | /api/v1/accounts/{id}/operations | Fetch account operations |
+| HTTP Method |             Endpoint             |               Description               |
+|:-----------:|:--------------------------------:|:---------------------------------------:|
+|    `POST`     | /api/v1/accounts/{id}/operations | Debit or credit an account,type in body |
+|     `GET`     | /api/v1/accounts/{id}/operations |        Fetch account operations         |
 
 ## **Validation rules**
 - Amount must not be null or negative: Proper error messages are returned for invalid inputs.
+- Type operation must be valid not null
 - Account existence:Operations fail gracefully if the account is not found.
 - Insufficient Balance: Credit operation fail if the account balance not sufficient.
 
@@ -77,7 +77,7 @@ Centralized exception handling ensures clean and consistent error responses. Bel
   "status": 404,
   "error": "NOT_FOUND",
   "message": "Account not found with id 1",
-  "path": "/api/v1/accounts/1/credit",
+  "path": "/api/v1/accounts/1/operations",
   "timestamp": "2024-12-16T04:57:37.8699155"
 }
 

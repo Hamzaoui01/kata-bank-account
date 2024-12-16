@@ -27,34 +27,20 @@ public class AccountController {
 
 
     /**
-     *
-     * Deposit money on an account
+     * Perform an operation (debit/credit) on account
      *
      * @param id The id for account to debit
-     * @param operationRequestDto : The amount to debit in the account
+     * @param operationRequestDto  The operation's data to perform (Type,amount ...)
+     * @return the created operation
      */
-    @PostMapping(value = "/{id}/debit",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Debit account",description = "Deposit money on the account")
-    public void debitAccount(@PathVariable("id") Long id , @Valid @RequestBody OperationRequestDto operationRequestDto) {
-        log.info("Received debit request for account {}: amount={}", id, operationRequestDto.getAmount());
-        accountService.debit(id,operationRequestDto.getAmount());
+    @PostMapping(value = "/{id}/operations",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Perform operation",description = "Make a deposit or withdraw operation")
+    @ResponseStatus(HttpStatus.CREATED)
+    public OperationDto performOperation(@PathVariable("id") Long id , @Valid @RequestBody OperationRequestDto operationRequestDto) {
+        log.info("Operation {} requested for account {}", operationRequestDto.type(),id);
+        return accountService.handleOperation(id,operationRequestDto.type(),operationRequestDto.amount());
     }
 
-    /**
-     *
-     * Withdraw money from account
-     *
-     * @param id The id for account to credit
-     * @param operationRequestDto The amount to withdraw from the account
-     */
-    @PostMapping(value = "/{id}/credit",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Credit account",description = "Withdraw money from the account")
-    public void creditAccount(@PathVariable("id") Long id , @Valid @RequestBody OperationRequestDto operationRequestDto) {
-        log.info("Received credit request for account {}: amount={}", id, operationRequestDto.getAmount());
-        accountService.credit(id,operationRequestDto.getAmount());
-    }
 
 
     /**
